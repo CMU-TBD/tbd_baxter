@@ -5,6 +5,13 @@ Maintainer - zhi.tan@ri.cmu.edu
 A collections of python modules/functions useful when working with baxter
 
 ## List of Modules/Functions
+### Head
+* Head Controller
+```
+from tbd_baxter_head.HeadController import HeadController
+controller = HeadController()
+controller.move_head("-1", rospy.Duration(1))
+```
 ### Motion
 * IK solver
 ```
