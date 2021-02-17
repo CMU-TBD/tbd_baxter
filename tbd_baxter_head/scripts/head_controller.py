@@ -79,13 +79,16 @@ class HeadController:
                 # speed ratio will be a function of goal time
                 msg.speed_ratio = np.clip(
                     1/(2 * (self._goal_duration.to_sec() + 1e-8)), 0.01, 1)
+                self.pub.publish(msg)
+
+
             elif self._enable_noise:
                 # add noise
                 # TODO add perlin noise
                 noise = 0
                 msg.target = self._target + noise
+                self.pub.publish(msg)
 
-            self.pub.publish(msg)
             self._noise_rate.sleep()
 
 
