@@ -30,12 +30,14 @@ class HeadController(object):
         topic: str
             Topic if different
         """
-        goal = HeadCmdGoal
-        #goal.enable_pan_request = HeadCmdGoal.REQUEST_PAN_DISABLE
+        goal = HeadCmdGoal()
         goal.enable_noise = noise
         goal.target = target
         goal.duration = duration
 
         self._client.send_goal(goal)
         if wait:
-            self._client.wait_for_result()
+            return self._client.wait_for_result(rospy.Duration(10))
+        else:
+            return True
+

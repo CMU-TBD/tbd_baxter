@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 import rospy
 from geometry_msgs.msg import (
@@ -47,35 +47,6 @@ def solve_IK_PseudoInverse(arm, pose):
 
     #get pseudo inverse
     kin.jacobian_pseudo_inverse()
-
-
-    print '\n*** Baxter Description ***\n'
-    kin.print_robot_description()
-    print '\n*** Baxter KDL Chain ***\n'
-    kin.print_kdl_chain()
-    # FK Position
-    print '\n*** Baxter Position FK ***\n'
-    print kin.forward_position_kinematics()
-    # FK Velocity
-    # print '\n*** Baxter Velocity FK ***\n'
-    # kin.forward_velocity_kinematics()
-    # IK
-    print '\n*** Baxter Position IK ***\n'
-    pos = [0.582583, -0.180819, 0.216003]
-    rot = [0.03085, 0.9945, 0.0561, 0.0829]
-    print kin.inverse_kinematics(pos)  # position, don't care orientation
-    print '\n*** Baxter Pose IK ***\n'
-    print kin.inverse_kinematics(pos, rot)  # position & orientation
-    # Jacobian
-    print '\n*** Baxter Jacobian ***\n'
-    print kin.jacobian()
-    # Jacobian Transpose
-    print '\n*** Baxter Jacobian Tranpose***\n'
-    print kin.jacobian_transpose()
-    # Jacobian Pseudo-Inverse (Moore-Penrose)
-    print '\n*** Baxter Jacobian Pseudo-Inverse (Moore-Penrose)***\n'
-    print 
-
 
     #change Pose to PoseStamped
     if not hasattr(pose,'header'):

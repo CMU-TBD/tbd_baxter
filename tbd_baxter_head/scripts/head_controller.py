@@ -46,10 +46,11 @@ class HeadController:
         with self._curr_pan_state_lock:
             self._curr_pan_state = msg.pan
             # check if we are close to target
-            if not self._done and np.isclose(msg.pan, self._target, atol=0.05):
+            if not self._done and np.isclose(msg.pan, self._target, atol=0.1):
                 self._done = True
 
     def _head_cmd_cb(self, goal):
+        rospy.logdebug(f"receiving goal of {goal.target}")
         self._enable_noise = goal.enable_noise
         self._goal_duration = goal.duration
         with self._curr_pan_state_lock:
@@ -63,6 +64,7 @@ class HeadController:
         # return
         result = HeadCmdResult()
         result.complete = True
+        rospy.logdebug(f"goal of {goal.target} is {not self._head_server.is_preempt_requested}")
         self._head_server.set_succeeded(result)
 
     def spin(self):
@@ -79,7 +81,7 @@ class HeadController:
                 # speed ratio will be a function of goal time
                 msg.speed_ratio = np.clip(
                     1/(2 * (self._goal_duration.to_sec() + 1e-8)), 0.01, 1)
-                self.pub.publish(msg)
+                #self.pub.publish(msg)
 
 
             elif self._enable_noise:
@@ -87,8 +89,8 @@ class HeadController:
                 # TODO add perlin noise
                 noise = 0
                 msg.target = self._target + noise
-                self.pub.publish(msg)
 
+            self.pub.publish(msg)
             self._noise_rate.sleep()
 
 
