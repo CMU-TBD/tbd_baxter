@@ -13,7 +13,7 @@
 	</include>
 
 	<group if="$(eval form == 'robocept')">
-		<node name="screen_pipe" pkg="tbd_robocept_sim" type="screen_pipe_node" output="$(arg output)">
+		<node name="screen_pipe" pkg="tbd_robocept_nodes" type="screen_pipe_node" output="$(arg output)">
 		</node>
 		<node name="robocept_face_relay" pkg="tbd_baxter_head" type="robocept_face_relay.py" output="$(arg output)">
 			<remap from="face_in" to="robocept_face" /> 
