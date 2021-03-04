@@ -21,12 +21,12 @@ def main():
             # resize to the size we want (600x1024) for baxter
             pad_size = (1024 - 600)//2
             padded_cv2_img = cv2.copyMakeBorder(cv2_img,0,0,pad_size, pad_size, cv2.BORDER_CONSTANT)
-            padded_msg = bridge.cv2_to_imgmsg(padded_cv2_img)
+            padded_msg = bridge.cv2_to_imgmsg(padded_cv2_img, encoding='bgr8')
             pub.publish(padded_msg)
         elif msg.width == msg.height == 1024:
             crop_size = (1024-600)//2
             crop_img = cv2_img[crop_size:1024-crop_size, 0:1024].copy()
-            crop_msg = bridge.cv2_to_imgmsg(crop_img)
+            crop_msg = bridge.cv2_to_imgmsg(crop_img, encoding='bgr8')
             pub.publish(crop_msg)
         else:
             rospy.logerr(f"Receive Image of unsupported size:{msg.width}x{msg.height}")

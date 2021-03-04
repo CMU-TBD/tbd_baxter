@@ -1,5 +1,8 @@
 # CHANGELOG
 
+# 2021-03-04
+- **[Fixed]** Bug where face relay doesn't work in gazebo.
+
 ## 2021-03-03
 - **[Fixed]** Fixed robocept face piping package path.
 
