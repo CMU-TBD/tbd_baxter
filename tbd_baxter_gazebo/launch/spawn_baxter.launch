@@ -24,8 +24,8 @@
   <!-- Load the software version into the ROS Parameter Server -->
   <param name="rethink/software_version" value="1.2.0" />
 
-  <!-- Publish a static transform between the world and the base of the robot -->
-  <node pkg="tf2_ros" type="static_transform_publisher" name="base_to_world" args="$(arg baxter_x) $(arg baxter_y) 0.93 $(arg baxter_yaw) 0 0 world base" />
+  <!-- Publish a static transform between the world and the base of the robot as given by the real robot-->
+  <node pkg="tf2_ros" type="static_transform_publisher" name="base_to_world" args="0 0 0 0 0 0 world base" />
 
   <!-- Run a python script to the send a service call to gazebo_ros to spawn baxter_sdk_controlbaxter_sdk_controla URDF robot -->
    <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"

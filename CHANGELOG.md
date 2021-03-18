@@ -1,5 +1,8 @@
 # CHANGELOG
 
+# 2021-03-18
+- **[Changed]** Baxter now publish the `world` tf frame that is colocated with `base`. This matches the code on the actual robot.
+
 # 2021-03-04
 - **[Fixed]** Bug where face relay doesn't work in gazebo.
 
