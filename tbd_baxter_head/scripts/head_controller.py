@@ -63,39 +63,36 @@ class HeadController:
         
         # return
         result = HeadCmdResult()
-        result.complete = True
-        rospy.logdebug(f"goal of {goal.target} is {not self._head_server.is_preempt_requested}")
+        result.complete = not self._head_server.is_preempt_requested()
+        rospy.logdebug(f"goal of {goal.target} is {result.complete}")
         self._head_server.set_succeeded(result)
 
     def spin(self):
 
+        msg = HeadPanCommand()
+        msg.enable_pan_request = msg.REQUEST_PAN_DISABLE
         while not rospy.is_shutdown():
-
-            msg = HeadPanCommand()
-            msg.enable_pan_request = msg.REQUEST_PAN_DISABLE
 
             # move the head if we are executing an action
             if not self._done:
-                # set the target
+                # update the goal
                 msg.target = self._target
                 # speed ratio will be a function of goal time
                 msg.speed_ratio = np.clip(
                     1/(2 * (self._goal_duration.to_sec() + 1e-8)), 0.01, 1)
                 #self.pub.publish(msg)
-
-
             elif self._enable_noise:
                 # add noise
                 # TODO add perlin noise
                 noise = 0
                 msg.target = self._target + noise
-
+            
             self.pub.publish(msg)
             self._noise_rate.sleep()
 
 
 if __name__ == '__main__':
-    rospy.init_node('head_controller')
+    rospy.init_node('head_controller', log_level=rospy.DEBUG)
     head = HeadController()
     rospy.loginfo("starting head controller")
     head.spin()

@@ -3,7 +3,8 @@ import rospy
 
 from tbd_baxter_msgs.msg import(
     HeadCmdAction,
-    HeadCmdGoal
+    HeadCmdGoal,
+    HeadCmdResult
 )
 import actionlib
 
@@ -14,7 +15,7 @@ class HeadController(object):
         self._client = actionlib.SimpleActionClient(topic, HeadCmdAction)
         self._client.wait_for_server()
 
-    def move_head(self, target: float, duration: rospy.Duration, wait: bool = True, noise: bool = False) -> None:
+    def move_head(self, target: float, duration: rospy.Duration, wait: bool = True, noise: bool = False) -> bool:
         """ Move Baxter's head to the target
 
         parameters
@@ -29,6 +30,11 @@ class HeadController(object):
             Whether there will be idle noise movements
         topic: str
             Topic if different
+
+        returns
+        -------
+        bool:
+            Whether the movement action was successful.
         """
         goal = HeadCmdGoal()
         goal.enable_noise = noise
@@ -37,7 +43,11 @@ class HeadController(object):
 
         self._client.send_goal(goal)
         if wait:
-            return self._client.wait_for_result(rospy.Duration(10))
+            if not self._client.wait_for_result(rospy.Duration(10)):
+                return False 
+            result: HeadCmdResult
+            result = self._client.get_result()
+            return result.complete
         else:
             return True
 
