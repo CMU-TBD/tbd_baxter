@@ -13,10 +13,8 @@
 	</include>
 
 	<group if="$(eval form == 'robocept')">
-		<node name="screen_pipe" pkg="tbd_robocept_nodes" type="screen_pipe_node" output="$(arg output)">
-		</node>
-		<node name="robocept_face_relay" pkg="tbd_baxter_head" type="robocept_face_relay.py" output="$(arg output)">
-			<remap from="face_in" to="robocept_face" /> 
+		<node name="baxter_robocept_face_relay" pkg="tbd_baxter_head" type="robocept_face_relay.py" output="$(arg output)">
+			<remap from="face_in" to="/robocept/robocept_face" /> 
 			<remap from="face_out" to="/robot/xdisplay" /> 
 		</node>
 	</group>
