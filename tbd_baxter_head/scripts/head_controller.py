@@ -94,5 +94,5 @@ class HeadController:
 if __name__ == '__main__':
     rospy.init_node('head_controller', log_level=rospy.DEBUG)
     head = HeadController()
-    rospy.loginfo("starting head controller")
+    rospy.loginfo("head controller started")
     head.spin()
