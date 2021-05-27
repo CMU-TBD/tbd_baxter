@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2021-05-27
+- **[Fixed]** Updated `camera_controller.py` to might work in Python3. Untested.
+
 ## 2021-04-14
 - **[Changed]** Remove screen pipe from the launch. It needs to be started by the roceptionist components.
 

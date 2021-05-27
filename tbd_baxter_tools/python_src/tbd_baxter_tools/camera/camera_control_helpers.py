@@ -2,7 +2,6 @@
 import rospy
 import rosgraph
 import socket
-import time
 import errno
 import os
 
@@ -11,6 +10,7 @@ from baxter_core_msgs.srv import CloseCamera
 from baxter_core_msgs.srv import ListCameras
 from baxter_core_msgs.msg import CameraControl
 from baxter_core_msgs.msg import CameraSettings
+
 
 class CameraController(object):
     _validCameras = ['head_camera', 'left_hand_camera', 'right_hand_camera']
@@ -65,20 +65,20 @@ class CameraController(object):
         isHalfResolution = False
         for control in settings.controls:
             if (control.id == CameraControl.CAMERA_CONTROL_EXPOSURE and
-               (control.value < -1 or control.value > 100)):
-               return False, "Invalid exposure %d" % control.value
+                    (control.value < -1 or control.value > 100)):
+                return False, "Invalid exposure %d" % control.value
             if (control.id == CameraControl.CAMERA_CONTROL_GAIN and
-               (control.value < -1 or control.value > 79)):
-               return False, "Invalid gain %d" % control.value
+                    (control.value < -1 or control.value > 79)):
+                return False, "Invalid gain %d" % control.value
             if (control.id == CameraControl.CAMERA_CONTROL_WHITE_BALANCE_R and
-               (control.value < -1 or control.value > 4095)):
-               return False, "Invalid white balance red %d" % control.value
+                    (control.value < -1 or control.value > 4095)):
+                return False, "Invalid white balance red %d" % control.value
             if (control.id == CameraControl.CAMERA_CONTROL_WHITE_BALANCE_G and
-               (control.value < -1 or control.value > 4095)):
-               return False, "Invalid white balance green %d" % control.value
+                    (control.value < -1 or control.value > 4095)):
+                return False, "Invalid white balance green %d" % control.value
             if (control.id == CameraControl.CAMERA_CONTROL_WHITE_BALANCE_B and
-               (control.value < -1 or control.value > 4095)):
-               return False, "Invalid white balance blue %d" % control.value
+                    (control.value < -1 or control.value > 4095)):
+                return False, "Invalid white balance blue %d" % control.value
             if (control.id == CameraControl.CAMERA_CONTROL_RESOLUTION_HALF):
                 isHalfResolution = control.value
         # Now that we know if it is half resolution, we can check the window
@@ -88,13 +88,12 @@ class CameraController(object):
             limitY /= 2
         for control in settings.controls:
             if (control.id == CameraControl.CAMERA_CONTROL_WINDOW_X and
-               (control.value < 0 or control.value > limitX)):
-               return False, "Invalid window x %d, max = %d" % (control.value, limitX)
+                    (control.value < 0 or control.value > limitX)):
+                return False, "Invalid window x %d, max = %d" % (control.value, limitX)
             if (control.id == CameraControl.CAMERA_CONTROL_WINDOW_Y and
-               (control.value < 0 or control.value > limitY)):
-               return False, "Invalid window y %d, max = %d" % (control.value, limitY)
+                    (control.value < 0 or control.value > limitY)):
+                return False, "Invalid window y %d, max = %d" % (control.value, limitY)
         return True, ""
-
 
     @staticmethod
     def _setCameraController(controls, name, value):
@@ -152,11 +151,14 @@ class CameraController(object):
         if "gain" in kwargs:
             CameraController._setCameraController(settings.controls, CameraControl.CAMERA_CONTROL_GAIN, kwargs["gain"])
         if "whiteBalanceR" in kwargs:
-            CameraController._setCameraController(settings.controls, CameraControl.CAMERA_CONTROL_WHITE_BALANCE_R, kwargs["whiteBalanceR"])
+            CameraController._setCameraController(
+                settings.controls, CameraControl.CAMERA_CONTROL_WHITE_BALANCE_R, kwargs["whiteBalanceR"])
         if "whiteBalanceG" in kwargs:
-            CameraController._setCameraController(settings.controls, CameraControl.CAMERA_CONTROL_WHITE_BALANCE_G, kwargs["whiteBalanceG"])
+            CameraController._setCameraController(
+                settings.controls, CameraControl.CAMERA_CONTROL_WHITE_BALANCE_G, kwargs["whiteBalanceG"])
         if "whiteBalanceB" in kwargs:
-            CameraController._setCameraController(settings.controls, CameraControl.CAMERA_CONTROL_WHITE_BALANCE_B, kwargs["whiteBalanceB"])
+            CameraController._setCameraController(
+                settings.controls, CameraControl.CAMERA_CONTROL_WHITE_BALANCE_B, kwargs["whiteBalanceB"])
         if "windowX" in kwargs:
             CameraController._setCameraController(settings.controls, CameraControl.CAMERA_CONTROL_WINDOW_X, kwargs["windowX"])
         if "windowY" in kwargs:
@@ -166,10 +168,9 @@ class CameraController(object):
         if "mirror" in kwargs:
             CameraController._setCameraController(settings.controls, CameraControl.CAMERA_CONTROL_MIRROR, kwargs["mirror"])
         if "resolutionHalf" in kwargs:
-            CameraController._setCameraController(settings.controls, CameraControl.CAMERA_CONTROL_RESOLUTION_HALF, kwargs["resolutionHalf"])
+            CameraController._setCameraController(
+                settings.controls, CameraControl.CAMERA_CONTROL_RESOLUTION_HALF, kwargs["resolutionHalf"])
         return settings
-
-
 
     @staticmethod
     def openCameras(camera, camera2=None, settings=None, settings2=None):
@@ -186,22 +187,24 @@ class CameraController(object):
 
         # Check that the settings are valid
         if settings is not None:
-            ok, err =  CameraController._isValidCameraSettings(settings)
-            if not ok: raise ValueError("invalid settings: {}".format(err))
+            ok, err = CameraController._isValidCameraSettings(settings)
+            if not ok:
+                raise ValueError("invalid settings: {}".format(err))
         else:
             settings = CameraController._getDefaultSettings()
         CameraController._addDefaultValues(camera, settings)
         if settings2 is not None:
-            ok, err =  CameraController._isValidCameraSettings(settings2)
-            if not ok: raise ValueError("invalid settings2: {}".format(err))
+            ok, err = CameraController._isValidCameraSettings(settings2)
+            if not ok:
+                raise ValueError("invalid settings2: {}".format(err))
         else:
             settings2 = CameraController._getDefaultSettings()
         CameraController._addDefaultValues(camera2, settings2)
 
         # Get the currently powered cameras and what we need to close
         poweredCameras, streamingCameras = CameraController._getOpenCameras()
-        numPoweredCameras = poweredCameras.values().count(True)
-        numDesiredCameraStreaming = 0 # between camera and camera2, how many are open
+        numPoweredCameras = (list(poweredCameras.items())).count(True)
+        numDesiredCameraStreaming = 0  # between camera and camera2, how many are open
         if streamingCameras[camera]:
             numDesiredCameraStreaming += 1
         if camera2 is not None and streamingCameras[camera2]:
@@ -238,9 +241,8 @@ class CameraController(object):
                 resp = openService(camera2, settings2)
                 if resp.err != 0 and resp.err != errno.EINVAL:
                     raise OSError("error opening {}: {}".format(camera2, os.strerror(resp.err)))
-            except rospy.ServiceException as err:
+            except rospy.ServiceException:
                 raise OSError("error opening {}: {}".format(camera2, os.strerror(resp.err)))
-
 
     @staticmethod
     def closeCamera(camera):
@@ -253,8 +255,9 @@ class CameraController(object):
         except rospy.ServiceException as err:
             raise OSError("error closing {}: {}".format(camera, err))
 
+
 # Sample Usage
 if __name__ == '__main__':
-    settings = CameraController.createCameraSettings(width=640, height=400, exposure=-1) # settings for the first camera
-    settings2 = CameraController.createCameraSettings(width=1280, height=800, exposure=-1) # settings for the second camera
+    settings = CameraController.createCameraSettings(width=640, height=400, exposure=-1)  # settings for the first camera
+    settings2 = CameraController.createCameraSettings(width=1280, height=800, exposure=-1)  # settings for the second camera
     CameraController.openCameras("head_camera", "right_hand_camera", settings=settings, settings2=settings2)
