@@ -60,7 +60,7 @@ class HeadController:
         # now we wait for the execution to be done
         while not self._done and not rospy.is_shutdown() and not self._head_server.is_preempt_requested():
             rospy.sleep(0.1)
-        
+
         # return
         result = HeadCmdResult()
         result.complete = not self._head_server.is_preempt_requested()
@@ -80,19 +80,19 @@ class HeadController:
                 # speed ratio will be a function of goal time
                 msg.speed_ratio = np.clip(
                     1/(2 * (self._goal_duration.to_sec() + 1e-8)), 0.01, 1)
-                #self.pub.publish(msg)
+                # self.pub.publish(msg)
             elif self._enable_noise:
                 # add noise
                 # TODO add perlin noise
                 noise = 0
                 msg.target = self._target + noise
-            
+
             self.pub.publish(msg)
             self._noise_rate.sleep()
 
 
 if __name__ == '__main__':
-    rospy.init_node('head_controller', log_level=rospy.DEBUG)
+    rospy.init_node('head_controller')
     head = HeadController()
     rospy.loginfo("head controller started")
     head.spin()
