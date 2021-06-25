@@ -1,14 +1,10 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 import rospy
-import argparse
-import baxter_interface
-from tbd_baxter_tools.camera import CameraController
-from sensor_msgs.msg import(
-    Image 
+from sensor_msgs.msg import (
+    Image
 )
 import cv2
-from std_msgs.msg import String
 from cv_bridge import CvBridge, CvBridgeError
 
 
@@ -28,7 +24,7 @@ class ImageSaver():
             elif val == 115:
                 self._save_image_to_file(self._last_cv_image)
             # x = 120
-            #s = 115
+            # s = 115
         # try:
         #   self.image_pub.publish(self.bridge.cv2_to_imgmsg(cv_image, "bgr8"))
         # except CvBridgeError as e:
@@ -36,7 +32,7 @@ class ImageSaver():
 
     def _save_image_to_file(self, img):
         filename = "{}-{}.png".format(self._file_name_starter, self._img_index)
-        cv2.imwrite(filename,img)
+        cv2.imwrite(filename, img)
         self._img_index += 1
 
     def __init__(self, show_img=False):
@@ -48,8 +44,9 @@ class ImageSaver():
         self._file_name_starter = str(rospy.Time.now())
         self._quit_flag = False
 
+
 def main():
-    #start the rosnode
+    # start the rosnode
     rospy.init_node("save_images")
 
     IS = ImageSaver(True)
@@ -58,5 +55,6 @@ def main():
             break
         rospy.sleep(0.1)
 
+
 if __name__ == "__main__":
-    main()    
+    main()

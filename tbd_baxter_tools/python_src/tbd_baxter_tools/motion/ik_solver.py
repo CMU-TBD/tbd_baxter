@@ -1,26 +1,24 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
-import rospy
-from geometry_msgs.msg import (
-    Pose,
-    PoseStamped
-)
-_trac_imported_flag = True
-try:
-    from trac_ik_baxter.srv import(
-        GetConstrainedPositionIK,
-        GetConstrainedPositionIKRequest    
-    )
-except ImportError:
-    print('Unable to import trac_IK, default to Baxter IK')
-    _trac_imported_flag = False 
-
+from baxter_pykdl import baxter_kinematics
 from baxter_core_msgs.srv import (
     SolvePositionIK,
     SolvePositionIKRequest
 )
+import rospy
+from geometry_msgs.msg import (
+    PoseStamped
+)
+_trac_imported_flag = True
+try:
+    from trac_ik_baxter.srv import (
+        GetConstrainedPositionIK,
+        GetConstrainedPositionIKRequest
+    )
+except ImportError:
+    print('Unable to import trac_IK, default to Baxter IK')
+    _trac_imported_flag = False
 
-from baxter_pykdl import baxter_kinematics
 
 def solve_IK_PseudoInverse(arm, pose):
     """
@@ -39,24 +37,24 @@ def solve_IK_PseudoInverse(arm, pose):
         The result of the IK
     """
 
-    #if PoseStamped change to Pose
+    # if PoseStamped change to Pose
     if hasattr(pose, 'header'):
         pose = pose.pose
-    
+
     kin = baxter_kinematics(arm)
 
-    #get pseudo inverse
+    # get pseudo inverse
     kin.jacobian_pseudo_inverse()
 
-    #change Pose to PoseStamped
-    if not hasattr(pose,'header'):
+    # change Pose to PoseStamped
+    if not hasattr(pose, 'header'):
         tmp = PoseStamped()
         tmp.header.frame_id = 'base'
         tmp.header.stamp = rospy.Time.now()
         tmp.pose = pose
         pose = tmp
 
-    #if trac exist
+    # if trac exist
     if _trac_imported_flag:
         service_addr = 'trac_ik_' + arm
         service_proxy = rospy.ServiceProxy(service_addr, GetConstrainedPositionIK)
@@ -76,7 +74,7 @@ def solve_IK_PseudoInverse(arm, pose):
         response = service_proxy(request)
         if response.isValid[0]:
             return response.joints[0]
-        return None        
+        return None
 
 
 def solve_IK(arm, pose):
@@ -95,15 +93,15 @@ def solve_IK(arm, pose):
     jnt: sensor_msgs/JointState
         The result of the IK
     """
-    #change Pose to PoseStamped
-    if not hasattr(pose,'header'):
+    # change Pose to PoseStamped
+    if not hasattr(pose, 'header'):
         tmp = PoseStamped()
         tmp.header.frame_id = 'base'
         tmp.header.stamp = rospy.Time.now()
         tmp.pose = pose
         pose = tmp
 
-    #if trac exist
+    # if trac exist
     if _trac_imported_flag:
         service_addr = 'trac_ik_' + arm
         service_proxy = rospy.ServiceProxy(service_addr, GetConstrainedPositionIK)
@@ -123,4 +121,4 @@ def solve_IK(arm, pose):
         response = service_proxy(request)
         if response.isValid[0]:
             return response.joints[0]
-        return None        
+        return None
